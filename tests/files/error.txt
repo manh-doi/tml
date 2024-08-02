@@ -1,0 +1,4 @@
+this is good code
+this line has a error from here until next line
+still error, error finishes at here, this is good code
+still good code

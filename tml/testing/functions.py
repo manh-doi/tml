@@ -1,14 +1,12 @@
 from tml.testing.utils import lex
-from tml.parsing.parser import Parser
+from tml.parsing.parser import Parser, parse
 
 
 def build_test_case(input_str, builder_class, expectation, end_token):
     def wrap():
         tokens = lex(input_str)
-        parser = Parser(tokens)
-        parser.move_next()
-
-        res = builder_class()(parser)
+        parser = Parser(tokens, builder_class())
+        res = parser.parse()
         print(res)
         assert res.is_success()
         assert res.res == expectation

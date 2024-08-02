@@ -1,15 +1,19 @@
 from functools import wraps, reduce
 
 from tml.common.tokens import Token
+from tml.errors.syntax_errors import ParserSyntaxError
 from tml.parsing.parse_results import ParseSuccess, ParseFailure
 
 
 def debug(func):
+    is_debug = True
+
     @wraps(func)
     def wrap(self, parser, *args, **kwargs):
         res = func(self, parser, *args, **kwargs)
-        print(
-            f"{res}, func: {self.__class__.__name__}, idx: {parser.current_index}, tok: {parser.current_token}, toks: {parser.tokens}")
+        if is_debug:
+            print(
+                f"{res}, func: {self.__class__.__name__}, idx: {parser.current_index}, tok: {parser.current_token}, toks: {parser.tokens}")
         return res
 
     return wrap
@@ -64,11 +68,11 @@ class Terminate(Builder):
         if self.value is not None:
             if parser.current_token is not None and parser.current_token.t_type == self.t_type and parser.current_token.value == self.value:
                 return ParseSuccess(parser.current_token)
-            return ParseFailure(f"Syntax error: a {self.value} is expected")
+            return ParseFailure(ParserSyntaxError(parser.current_token, f"Syntax error: a {self.value} is expected"))
         else:
             if parser.current_token is not None and parser.current_token.t_type == self.t_type:
                 return ParseSuccess(parser.current_token)
-            return ParseFailure(f"Syntax error: a {self.t_type} is expected")
+            return ParseFailure(ParserSyntaxError(parser.current_token, f"Syntax error: a {self.t_type} is expected"))
 
     def first_k(self):
         return [Token(self.t_type, self.value)]

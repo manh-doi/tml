@@ -3,7 +3,7 @@ import string
 from tml.common.position import Position
 from tml.common.tokens import LBRACE, RBRACE, LSQBRACE, RSQBRACE, LPAREN, RPAREN, PLUS, MINUS, MUL, DIV, Token, EOF, \
     INT, FLOAT, KW, IDENT, EQ, STRING, COLON, COMMA
-from tml.exceptions.lexical_errors import InvalidCharacterError
+from tml.errors.lexical_errors import InvalidCharacterError
 
 SIMPLE_CASES = {
     "{": LBRACE,
@@ -109,29 +109,44 @@ class Lexer:
         else:
             self.current_char = None
 
+    def append_token(self, token):
+        token.start_position.file_name = self.file_name
+        token.end_position.file_name = self.file_name
+        self.tokens.append(token)
+
     def tokenize(self, input_str, file_name):
 
         self.input_str = input_str
         self.file_name = file_name
         self.index = Position(file_name)
+        self.move_next()
 
         def token_from_build_funcs():
             for condition, build_func in self.build_funcs:
                 if condition(self.current_char):
+                    start_position = self.index.copy()
                     token, error = build_func(self)
+                    end_position = self.index.copy()
                     if token:
-                        self.tokens.append(token)
-                        return True
+                        token.start_position = start_position
+                        token.end_position = end_position
+                        self.append_token(token)
+                        return True, None
                     else:
                         return None, error
-            return False
+            return False, None
 
-        self.move_next()
         while self.current_char is not None:
+            token_start_position = self.index.copy()
             if self.current_char in self.simple_cases:
-                self.tokens.append(Token(self.simple_cases[self.current_char]))
+                token_end_position = self.index.copy()
+                self.append_token(Token(self.simple_cases[self.current_char], start_position=token_start_position,
+                                        end_position=token_end_position))
                 self.move_next()
             else:
-                token_from_build_funcs() or self.move_next()
+                res, error = token_from_build_funcs()
+                if error:
+                    return None, error
+                res or self.move_next()
         self.tokens.append(Token(EOF))
         return self.tokens, None

@@ -3,12 +3,12 @@ class Position:
         self.index = -1
         self.file_name = file_name
         self.col = 0
-        self.line = 0
+        self.line = 1
 
     def move_next(self, character):
         self.index += 1
         if character == "\n":
-            self.col = 0
+            self.col = 1
             self.line += 1
         else:
             self.col += 1
