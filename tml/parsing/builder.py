@@ -5,11 +5,14 @@ from tml.parsing.parse_results import ParseSuccess, ParseFailure
 
 
 def debug(func):
+    is_debug = False
+
     @wraps(func)
     def wrap(self, parser, *args, **kwargs):
         res = func(self, parser, *args, **kwargs)
-        print(
-            f"{res}, func: {self.__class__.__name__}, idx: {parser.current_index}, tok: {parser.current_token}, toks: {parser.tokens}")
+        if is_debug:
+            print(
+                f"{res}, func: {self.__class__.__name__}, idx: {parser.current_index}, tok: {parser.current_token}, toks: {parser.tokens}")
         return res
 
     return wrap
