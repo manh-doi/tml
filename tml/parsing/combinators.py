@@ -123,28 +123,6 @@ class Repeat(Combinator):
         return self.builder_class().is_llk()
 
 
-class OneOrMany(Combinator):
-    def __init__(self, builder_class):
-        self.builder_class = builder_class
-        self.result = []
-        self.builder = Seq().m_plus(builder_class).m_plus(lambda: Repeat(builder_class))
-
-    def __call__(self, parser, *args, **kwargs) -> ParseResult:
-        res = self.builder(parser)
-        if res.is_success():
-            head, tail = res.res
-            tail.insert(0, head)
-            self.result = tail
-            return res.__class__(self.result)
-        return res
-
-    def first_k(self):
-        return self.builder_class().first_k()
-
-    def is_llk(self):
-        return self.builder_class().is_llk()
-
-
 class OneOrNone(Combinator):
     def __init__(self, builder_class):
         self.builder_class = builder_class
@@ -168,13 +146,6 @@ class OneOrNone(Combinator):
 def repeat(builder_class):
     def wrap():
         return Repeat(builder_class)
-
-    return wrap
-
-
-def one_or_many(builder_class):
-    def wrap():
-        return OneOrMany(builder_class)
 
     return wrap
 
