@@ -1,4 +1,4 @@
-from tests.utils import lex
+from tml.testing.utils import lex
 from tml.parsing.parser import Parser
 
 
