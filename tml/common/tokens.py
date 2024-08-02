@@ -28,10 +28,11 @@ EOF = "EOF"
 
 
 class Token:
-    def __init__(self, t_type, value=None, position=None):
+    def __init__(self, t_type, value=None, start_position=None, end_position=None):
         self.t_type = t_type
         self.value = value
-        self.position = position
+        self.start_position = start_position
+        self.end_position = end_position
 
     def __repr__(self):
         if self.value is not None:

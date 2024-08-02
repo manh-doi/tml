@@ -1,5 +1,6 @@
 from functools import reduce
 
+from tml.errors.syntax_errors import ParserSyntaxError
 from tml.parsing.parse_results import ParseResult, ParseFailure, ParseNotMatch, ParseSuccess
 
 
@@ -57,7 +58,7 @@ class Seq(Combinator):
                 result.append(res.res)
                 self.final_state = ParseNotMatch(result)
             else:
-                return ParseFailure("Syntax error")
+                return res
         return self.final_state
 
 
@@ -85,12 +86,10 @@ class Select(Combinator):
         for builder in self.builder_classes:
             self.current_builder = builder()
             if parser.current_token is not None and self.current_builder.in_first(parser.current_token):
-                # org_index, org_token = parser.current_index, parser.current_token
                 self.res = self.current_builder(parser)
                 if self.res.is_success():
                     return self.res
-                # parser.current_index, parser.current_token = org_index, org_token
-        self.res = ParseFailure("Syntax error")
+        self.res = ParseFailure(ParserSyntaxError(parser.current_token, f"it should be in {self.first_k()}"))
         return self.res
 
 

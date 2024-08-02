@@ -24,8 +24,9 @@ class ParseSuccess(ParseResult):
 
 
 class ParseFailure(ParseResult):
-    def __init__(self, res):
-        super().__init__(res)
+    def __init__(self, error):
+        super().__init__(None)
+        self.error = error
 
     def is_success(self):
         return False

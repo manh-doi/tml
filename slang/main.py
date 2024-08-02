@@ -1,6 +1,6 @@
 from slang.builders import File
 from tml.lexical.lexer import Lexer, DIGITS, build_number, ASCII_LETTERS_UNDERSCORE, build_ident, build_string
-from tml.parsing.parser import Parser, parse
+from tml.parsing.parser import parse
 
 if __name__ == '__main__':
     file_name = "slang/slang_files/first.sl"
@@ -15,8 +15,13 @@ if __name__ == '__main__':
 
     tokens, error = lexer.tokenize(input_str, file_name)
 
-    if tokens:
+    if not error:
         print(f"tokens: {tokens}")
-        res = parse(tokens, File())
+        res = parse(tokens, File)
         if res.is_success():
             print(f"nodes: {res.res}")
+        else:
+            print(res.error)
+
+    else:
+        print(error)
