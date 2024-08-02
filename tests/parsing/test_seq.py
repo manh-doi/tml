@@ -1,8 +1,8 @@
 import pytest
 
+from tml.parsing.builder import terminate
 from tml.testing.functions import build_test_case
 from tml.common.tokens import INT, Token, IDENT, COMMA, EOF
-from demo_lang.parsing.builder import terminate
 from tml.parsing.combinators import repeat, seq, one_or_none
 
 

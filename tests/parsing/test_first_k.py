@@ -2,8 +2,8 @@ from functools import reduce
 
 import pytest
 
-from demo_lang.parsing.builder import terminate
 from tml.common.tokens import INT, Token, FLOAT
+from tml.parsing.builder import terminate
 from tml.parsing.combinators import Seq, Repeat, Select, OneOrNone
 
 
@@ -17,11 +17,11 @@ from tml.parsing.combinators import Seq, Repeat, Select, OneOrNone
      [Token(INT), None, Token(FLOAT)]),
 
 ])
-def test_cases(request):
+def cases(request):
     return request.param
 
 
-def test_first_k(test_cases):
-    builder, first = test_cases
+def test_first_k(cases):
+    builder, first = cases
     builder_first_k = builder.first_k()
     assert reduce(lambda r, x: r and (x in builder_first_k), first, True)
