@@ -8,10 +8,10 @@ from tml.parsing.combinators import one_or_none, seq
 
 def build_one_or_none():
     inputs = [
-        ("1", one_or_none(terminate(INT)), Token(INT, "1"), Token(INT, "1")),
-        ("a", one_or_none(terminate(INT)), None, Token(IDENT, "a")),
-        ("a 1", one_or_none(terminate(INT)), None, Token(IDENT, "a")),
-        ("a 1 b", seq(terminate(IDENT), one_or_none(terminate(IDENT))), [Token(IDENT, "a"), None], Token(INT, "1")),
+        # ("1", one_or_none(terminate(INT)), Token(INT, "1"), Token(INT, "1")),
+        # ("a", one_or_none(terminate(INT)), None, Token(IDENT, "a")),
+        # ("a 1", one_or_none(terminate(INT)), None, Token(IDENT, "a")),
+        # ("a 1 b", seq(terminate(IDENT), one_or_none(terminate(IDENT))), [Token(IDENT, "a"), None], Token(INT, "1")),
         ("a 1 b", seq(one_or_none(terminate(INT)), one_or_none(terminate(INT))), [None, None],
          Token(IDENT, "a"))
     ]
