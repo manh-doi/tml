@@ -6,7 +6,7 @@ from tml.parsing.parse_results import ParseSuccess, ParseFailure
 
 
 def debug(func):
-    is_debug = True
+    is_debug = False
 
     @wraps(func)
     def wrap(self, parser, *args, **kwargs):
@@ -52,7 +52,7 @@ class Builder:
         res = self.builder_class()(parser)
         if res.is_success():
             node = self.make_node(res.res)
-            return res.__class__(node)
+            return res.is_matched() and res.__class__(node) or res.__class__(node, res.errors)
         return res
 
 

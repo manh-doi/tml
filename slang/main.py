@@ -21,7 +21,7 @@ if __name__ == '__main__':
         if res.is_success():
             print(f"nodes: {res.res}")
         else:
-            print(res.error)
+            print(res.errors[0])
 
     else:
         print(error)

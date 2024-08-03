@@ -46,6 +46,7 @@ class Seq(Combinator):
     def __call__(self, parser, *args, **kwargs) -> ParseResult:
         result = []
         latest_builder = self.builder_classes[-1:][0]
+        final_state = ParseSuccess(result)
         for builder_class in self.builder_classes:
             self.current_builder = builder_class()
             res = self.current_builder(parser)
@@ -53,13 +54,32 @@ class Seq(Combinator):
                 result.append(res.res)
                 if builder_class != latest_builder:
                     parser.move_next()
-                self.final_state = ParseSuccess(result)
+                final_state = final_state.bind(res.__class__(result))
             elif isinstance(res, ParseNotMatch):
                 result.append(res.res)
-                self.final_state = ParseNotMatch(result)
+                final_state = final_state.bind(res.__class__(result, res.errors))
             else:
-                return res
-        return self.final_state
+                final_state = final_state.bind(res)
+                return final_state
+        return final_state
+
+    # def __call__(self, parser, *args, **kwargs) -> ParseResult:
+    #     result = []
+    #     latest_builder = self.builder_classes[-1:][0]
+    #     for builder_class in self.builder_classes:
+    #         self.current_builder = builder_class()
+    #         res = self.current_builder(parser)
+    #         if isinstance(res, ParseSuccess):
+    #             result.append(res.res)
+    #             if builder_class != latest_builder:
+    #                 parser.move_next()
+    #             self.final_state = res.__class__(result)
+    #         elif isinstance(res, ParseNotMatch):
+    #             result.append(res.res)
+    #             self.final_state = res.__class__(result, res.errors)
+    #         else:
+    #             return res
+    #     return self.final_state
 
 
 class Select(Combinator):
@@ -112,8 +132,8 @@ class Repeat(Combinator):
                     parser.move_next()
                 res = builder(parser)
             parser.current_index, parser.current_token = org_index, org_token
-            return final_class(self.result)
-        return ParseNotMatch(self.result)
+            return final_class(self.result, res.errors)
+        return ParseNotMatch(self.result, res.errors)
 
     def first_k(self):
         return [None] + self.builder_class().first_k()
@@ -133,7 +153,7 @@ class OneOrNone(Combinator):
         if res.is_success():
             self.result = res.res
             return ParseSuccess(self.result)
-        return ParseNotMatch(self.result)
+        return ParseNotMatch(self.result, res.errors)
 
     def first_k(self):
         return [None] + self.builder_class().first_k()
