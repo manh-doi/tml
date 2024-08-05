@@ -1,6 +1,6 @@
 from functools import reduce
 
-from slang.nodes import IntNode, TermNode, SumNode, FloatNode
+from nodes import IntNode, TermNode, SumNode, FloatNode
 from tml.common.tokens import INT, FLOAT, DIV, MUL, MINUS, PLUS, EOF
 from tml.parsing.builder import Builder, terminate
 from tml.parsing.combinators import select, seq, repeat
