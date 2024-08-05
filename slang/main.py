@@ -1,9 +1,9 @@
-from slang.builders import File
+from builders import File
 from tml.lexical.lexer import Lexer, DIGITS, build_number, ASCII_LETTERS_UNDERSCORE, build_ident, build_string
 from tml.parsing.parser import parse
 
 if __name__ == '__main__':
-    file_name = "slang/slang_files/first.sl"
+    file_name = "slang_files/first.sl"
 
     with open(file_name) as f:
         input_str = f.read()

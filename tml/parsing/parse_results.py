@@ -13,16 +13,6 @@ class ParseResult:
         return f"[{self.__class__.__name__}: {self.res}]"
 
     def bind(self, parse_result):
-        # match parse_result:
-        #     case ParseSuccess():
-        #         res = parse_result
-        #     case ParseFailure():
-        #         res = ParseFailure(self.errors and self.errors + parse_result.errors or parse_result.errors)
-        #     case ParseNotMatch():
-        #         res = self.__class__(self.res, self.errors and self.errors + parse_result.errors or parse_result.errors)
-        #     case _:
-        #         res = self
-        # return res
         pass
 
 
