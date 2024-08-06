@@ -25,6 +25,11 @@ def end_position(file_name):
     return position
 
 
-def test_error_detail(file_name, start_position, end_position):
+@pytest.fixture(scope="module", params=[None, open("tests/files/error.txt").read()])
+def content(request):
+    return request.param
+
+
+def test_error_detail(file_name, start_position, end_position, content):
     res = error_detail(file_name, start_position, end_position)
     print(f"\n{res}")

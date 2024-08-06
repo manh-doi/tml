@@ -1,9 +1,10 @@
 class Position:
-    def __init__(self, file_name):
+    def __init__(self, file_name, content=None):
         self.index = -1
         self.file_name = file_name
         self.col = 0
         self.line = 1
+        self.content = content
 
     def move_next(self, character):
         self.index += 1
@@ -18,6 +19,7 @@ class Position:
         res.index = self.index
         res.col = self.col
         res.line = self.line
+        res.content = self.content
         return res
 
     def __str__(self):
