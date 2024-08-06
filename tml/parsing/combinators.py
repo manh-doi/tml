@@ -63,24 +63,6 @@ class Seq(Combinator):
                 return final_state
         return final_state
 
-    # def __call__(self, parser, *args, **kwargs) -> ParseResult:
-    #     result = []
-    #     latest_builder = self.builder_classes[-1:][0]
-    #     for builder_class in self.builder_classes:
-    #         self.current_builder = builder_class()
-    #         res = self.current_builder(parser)
-    #         if isinstance(res, ParseSuccess):
-    #             result.append(res.res)
-    #             if builder_class != latest_builder:
-    #                 parser.move_next()
-    #             self.final_state = res.__class__(result)
-    #         elif isinstance(res, ParseNotMatch):
-    #             result.append(res.res)
-    #             self.final_state = res.__class__(result, res.errors)
-    #         else:
-    #             return res
-    #     return self.final_state
-
 
 class Select(Combinator):
     def __init__(self):

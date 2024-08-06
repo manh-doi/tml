@@ -3,15 +3,15 @@ from functools import wraps, reduce
 from tml.common.tokens import Token
 from tml.errors.syntax_errors import ParserSyntaxError
 from tml.parsing.parse_results import ParseSuccess, ParseFailure
+from tml.utils.config import config
 
 
 def debug(func):
-    is_debug = False
-
     @wraps(func)
     def wrap(self, parser, *args, **kwargs):
         res = func(self, parser, *args, **kwargs)
-        if is_debug:
+        is_debug = config["core"]["debug"]
+        if is_debug == "enable":
             print(
                 f"{res}, func: {self.__class__.__name__}, idx: {parser.current_index}, tok: {parser.current_token}, toks: {parser.tokens}")
         return res
