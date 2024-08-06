@@ -22,4 +22,14 @@
 
 <float> ::= FLOAT
 
+
+
+# xxx
+
+<list> ::= LSQBRACE <list_elements> RSQBRACE
+
+<list_elements> ::= [<list_element>]{COMMA <list_element>}[COMMA]
+
+<list_element> ::= <expression>
+
 ```

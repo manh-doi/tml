@@ -118,7 +118,7 @@ class Lexer:
 
         self.input_str = input_str
         self.file_name = file_name
-        self.index = Position(file_name)
+        self.index = file_name == "<stdin>" and Position(file_name, input_str) or Position(file_name)
         self.move_next()
 
         def token_from_build_funcs():
@@ -133,6 +133,8 @@ class Lexer:
                         self.append_token(token)
                         return True, None
                     else:
+                        if file_name == "<stdin>":
+                            error.content = input_str
                         return None, error
             return False, None
 
