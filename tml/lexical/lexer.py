@@ -2,7 +2,7 @@ import string
 
 from tml.common.position import Position
 from tml.common.tokens import LBRACE, RBRACE, LSQBRACE, RSQBRACE, LPAREN, RPAREN, PLUS, MINUS, MUL, DIV, Token, EOF, \
-    INT, FLOAT, KW, IDENT, EQ, STRING, COLON, COMMA
+    INT, FLOAT, KW, IDENT, EQ, STRING, COLON, COMMA, DER, EQEQ, GTEQ, GREATER, LESSEQ, LESS, NOTEQ
 from tml.errors.lexical_errors import InvalidCharacterError
 
 SIMPLE_CASES = {
@@ -27,6 +27,10 @@ DIGITS_DOT = DIGITS + "."
 ASCII_LETTERS = string.ascii_letters
 ASCII_LETTERS_UNDERSCORE = ASCII_LETTERS + "_"
 ASCII_LETTERS_UNDERSCORE_DIGITS = ASCII_LETTERS_UNDERSCORE + DIGITS
+
+LETTERS = string.ascii_letters
+PUNCTUATIONS = string.punctuation
+WHITE_SPACES = string.whitespace
 
 KEYWORDS = ("let", "ret", "dict", "from", "import", "as")
 
@@ -63,22 +67,79 @@ def build_ident(lexer):
     return Token(IDENT, res), None
 
 
-def build_string(lexer):
+def build_eq(lexer_object):
     res = ""
-    lexer.move_next()
-    while lexer.current_char is not None and lexer.current_char != "\"":
-        res += lexer.current_char
-        lexer.move_next()
+    lexer_object.start_position = lexer_object.index.copy()
+    while lexer_object.current_char in ["=", ">"]:
+        res += lexer_object.current_char
+        lexer_object.move_next()
+    if res == "=>":
+        return Token(DER), None
+    if res == "=":
+        return Token(EQ), None
+    if res == "==":
+        return Token(EQEQ), None
+    lexer_object.end_position = lexer_object.index.copy()
+    message = "unexpected character."
+    return InvalidCharacterError(lexer_object.file_name, lexer_object.start_position, lexer_object.end_position,
+                                 message)
 
-    if lexer.current_char == "\"":
-        lexer.move_next()
-        return Token(STRING, res), None
 
-    lexer.position_error_start = lexer.index.copy()
-    lexer.position_error_end = lexer.position_error_start
+def build_compare(lexer_object):
+    res = ""
+    lexer_object.start_position = lexer_object.index.copy()
+    while lexer_object.current_char in ("=", ">", "<"):
+        res += lexer_object.current_char
+        lexer_object.move_next()
+    if res == ">=":
+        return Token(GTEQ), None
+    if res == ">":
+        return Token(GREATER), None
+    if res == "<=":
+        return Token(LESSEQ), None
+    if res == "<":
+        return Token(LESS), None
+    lexer_object.end_position = lexer_object.index.copy()
+    message = "unexpected character."
+    return InvalidCharacterError(lexer_object.file_name, lexer_object.start_position, lexer_object.end_position,
+                                 message)
 
-    return None, InvalidCharacterError(lexer.file_name, lexer.position_error_start, lexer.position_error_end,
-                                       f"\" is expected")
+
+def build_not_eq(lexer_object):
+    res = ""
+    lexer_object.start_position = lexer_object.index.copy()
+    while lexer_object.current_char in ("=", "!"):
+        res += lexer_object.current_char
+        lexer_object.move_next()
+    if res == "!=":
+        return Token(NOTEQ), None
+    lexer_object.end_position = lexer_object.index.copy()
+    message = "'=' or '!' is expected."
+    return InvalidCharacterError(lexer_object.file_name, lexer_object.start_position, lexer_object.end_position,
+                                 message)
+
+
+def build_string(lexer_object):
+    res = ""
+    number_of_double_quote = 1
+    lexer_object.move_next()
+    while lexer_object.current_char is not None and lexer_object.current_char in LETTERS + DIGITS + PUNCTUATIONS + WHITE_SPACES and number_of_double_quote == 1:
+        if lexer_object.current_char == "\"":
+            number_of_double_quote += 1
+            lexer_object.move_next()
+        elif lexer_object.current_char == "\\":
+            slash = lexer_object.current_char
+            lexer_object.move_next()
+            if lexer_object.current_char is not None and lexer_object.current_char == "\"":
+                res = res + slash + '\"'
+                lexer_object.move_next()
+            else:
+                res = res + slash + lexer_object.current_char  # noqa
+                lexer_object.move_next()
+        else:
+            res = res + lexer_object.current_char
+            lexer_object.move_next()
+    return Token(STRING, res.rstrip("\n")), None
 
 
 class Lexer:
