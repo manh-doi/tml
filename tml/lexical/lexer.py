@@ -150,5 +150,5 @@ class Lexer:
                 if error:
                     return None, error
                 res or self.move_next()
-        self.tokens.append(Token(EOF))
+        self.append_token(Token(EOF, value=None, start_position=self.index.copy(), end_position=self.index.copy()))
         return self.tokens, None

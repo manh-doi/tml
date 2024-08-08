@@ -64,6 +64,26 @@ class Seq(Combinator):
         return final_state
 
 
+#     @debug
+#     def __call__(self, parser, *args, **kwargs) -> ParseResult:
+#         result = []
+#         latest_builder_class = self.builder_classes[-1:][0]
+#         for builder_class in self.builder_classes:
+#             self.current_builder = builder_class()
+#             res = self.current_builder(parser)
+#             if isinstance(res, ParseSuccess):
+#                 result.append(res.res)
+#                 if builder_class != latest_builder_class:
+#                     parser.move_next()
+#                 self.final_state = ParseSuccess(result)
+#             elif isinstance(res, ParseNotMatch):
+#                 result.append(res.res)
+#                 self.final_state = ParseNotMatch(result)
+#             else:
+#                 return ParseFailure(res.syntax_exception)
+#         return self.final_state
+
+
 class Select(Combinator):
     def __init__(self):
         self.builder_classes = []
@@ -134,7 +154,7 @@ class OneOrNone(Combinator):
         res = builder(parser)
         if res.is_success():
             self.result = res.res
-            return ParseSuccess(self.result)
+            return res.__class__(self.result, res.errors)
         return ParseNotMatch(self.result, res.errors)
 
     def first_k(self):

@@ -13,7 +13,7 @@ def debug(func):
         is_debug = config["core"]["debug"]
         if is_debug == "enable":
             print(
-                f"{res}, func: {self.__class__.__name__}, idx: {parser.current_index}, tok: {parser.current_token}, toks: {parser.tokens}")
+                f"idx: {parser.current_index}, tok: {parser.current_token}, {res}, func: {self.__class__.__name__}, toks: {parser.tokens}")
         return res
 
     return wrap
