@@ -70,7 +70,8 @@ class ParseNotMatch(ParseResult):
         return False
 
     def __repr__(self):
-        return f"[{self.__class__.__name__}: {self.errors}]"
+        res_str = "\n".join(map(lambda error: str(error), self.errors))
+        return f"{self.__class__.__name__}: Res: {self.res}\nError:\n {res_str}"
 
     def bind(self, parse_result):
         match parse_result:
