@@ -1,9 +1,9 @@
 .PHONY: all
 
-all: package uninstall install
+all: clean package uninstall install clean
 
 package:
-	rm -rf build && rm -rf dist && rm -rf m_tml.egg-info && python -m build --wheel
+	python -m build
 
 
 uninstall:
@@ -17,3 +17,5 @@ install:
 doc:
 	cd docs && make html
 
+clean:
+	rm -rf build && rm -rf dist && rm -rf m_tml.egg-info
